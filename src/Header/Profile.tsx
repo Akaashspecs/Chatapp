@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CgProfile } from "react-icons/cg";
 import { FaSortDown } from "react-icons/fa";
 import { GiHeartBeats } from "react-icons/gi";
@@ -29,6 +29,21 @@ const Profile = ({
   >;
 }) => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
+
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const tabSelected = tab.map((item) => {
@@ -75,8 +90,12 @@ const Profile = ({
             setMenuOpen(true);
           }}
         />
+
         {menuOpen === true && (
-          <div className="bg-headerGrey overflow-hidden  z-50 w-44 absolute -left-36 shadow-2xl  rounded-xl">
+          <div
+            ref={menuRef}
+            className="outside bg-headerGrey overflow-hidden  z-50 w-44 absolute -left-36 shadow-2xl  rounded-xl"
+          >
             {" "}
             <div
               className="bg-pink px-3  h-10 text-white font-semibold flex items-center "
